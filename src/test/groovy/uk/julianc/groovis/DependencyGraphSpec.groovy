@@ -10,6 +10,7 @@ class DependencyGraphSpec extends Specification {
     def cleanup() {
         def file = writeDotFile()
         generateImage(file)
+        GroovisBuilder.instance.clear()
     }
 
     private File writeDotFile() {

@@ -40,4 +40,8 @@ class GroovisBuilder {
         }
         out + '}\n'
     }
+
+    void clear() {
+        composition = [:]
+    }
 }
