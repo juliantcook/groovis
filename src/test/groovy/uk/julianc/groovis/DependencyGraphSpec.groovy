@@ -55,6 +55,26 @@ class DependencyGraphSpec extends Specification {
                 '}\n'
     }
 
+    def 'class with 2 children'() {
+        given:
+        input '''
+        class Father {
+            Daughter daughter
+            Son son
+        }
+
+        class Daughter {}
+        class Son {}
+'''
+
+        expect:
+        output ==
+                'digraph {\n' +
+                '    Father -> Daughter;\n' +
+                '    Father -> Son;\n' +
+                '}\n'
+    }
+
     private input(String input) {
         def transform = new GroovisTransform()
         new TransformTestHelper(transform, CONVERSION).parse input
