@@ -25,18 +25,42 @@ class DependencyGraphSpec extends Specification {
 
     def 'single class with no fields produces single node'() {
         given:
-        def transform = new GroovisTransform()
-        def clazz = new TransformTestHelper(transform, CONVERSION).parse '''
+        input '''
         class SomeService {
             def someMethod() {}
         }
 '''
 
         expect:
-        GroovisBuilder.instance.generate() ==
-            'digraph {\n' +
-            '    SomeService;\n' +
-            '}\n'
+        output ==
+                'digraph {\n' +
+                '    SomeService;\n' +
+                '}\n'
     }
 
+    def '2 classes can be singly linked'() {
+        given:
+        input '''
+        class SomeService {
+            SomeOtherService someOtherService
+        }
+
+        class SomeOtherService {}
+'''
+
+        expect:
+        output ==
+                'digraph {\n' +
+                '    SomeService -> SomeOtherService;\n' +
+                '}\n'
+    }
+
+    private input(String input) {
+        def transform = new GroovisTransform()
+        new TransformTestHelper(transform, CONVERSION).parse input
+    }
+
+    private String getOutput() {
+        GroovisBuilder.instance.generate()
+    }
 }
