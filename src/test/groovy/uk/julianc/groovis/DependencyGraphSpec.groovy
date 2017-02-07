@@ -53,6 +53,7 @@ class DependencyGraphSpec extends Specification {
         output ==
                 'digraph {\n' +
                 '    SomeService -> SomeOtherService;\n' +
+                '    SomeOtherService;\n' +
                 '}\n'
     }
 
@@ -73,6 +74,33 @@ class DependencyGraphSpec extends Specification {
                 'digraph {\n' +
                 '    Father -> Daughter;\n' +
                 '    Father -> Son;\n' +
+                '    Daughter;\n' +
+                '    Son;\n' +
+                '}\n'
+    }
+
+    def 'circular relation'() {
+        given:
+        input '''
+        class Foo {
+            Bar bar
+        }
+
+        class Bar {
+            Poop poop
+        }
+
+        class Poop {
+            Foo foo
+        }
+'''
+
+        expect:
+        output ==
+                'digraph {\n' +
+                '    Foo -> Bar;\n' +
+                '    Bar -> Poop;\n' +
+                '    Poop -> Foo;\n' +
                 '}\n'
     }
 
