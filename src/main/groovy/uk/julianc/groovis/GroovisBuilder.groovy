@@ -7,6 +7,7 @@ import org.codehaus.groovy.control.SourceUnit
 class GroovisBuilder {
 
     Map<String, List> composition = [:]
+    boolean generated = false
 
     void add(SourceUnit sourceUnit) {
         sourceUnit.AST.classes.each { ClassNode classNode ->
@@ -15,6 +16,7 @@ class GroovisBuilder {
     }
 
     String generate() {
+        generated = true
         def out = 'digraph {\n'
         out = composition.inject(out) { String acc, String className, List<String> dependsOn ->
             if (dependsOn) {
@@ -28,5 +30,6 @@ class GroovisBuilder {
 
     void clear() {
         composition = [:]
+        generated = false
     }
 }
