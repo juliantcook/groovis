@@ -2,6 +2,7 @@ group 'uk.julianc'
 version '0.1-SNAPSHOT'
 
 apply plugin: 'groovy'
+apply plugin: 'maven'
 
 repositories {
     mavenCentral()
