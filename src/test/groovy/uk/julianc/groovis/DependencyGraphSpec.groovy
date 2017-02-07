@@ -104,6 +104,25 @@ class DependencyGraphSpec extends Specification {
                 '}\n'
     }
 
+    def 'ignore enums'() {
+        given:
+        input '''
+        class Foo {
+            Bar bar
+        }
+
+        enum Bar {
+            POO
+        }
+'''
+
+        expect:
+        output ==
+                'digraph {\n' +
+                '    Foo;\n' +
+                '}\n'
+    }
+
     private input(String input) {
         def transform = new GroovisTransform()
         new TransformTestHelper(transform, CONVERSION).parse input

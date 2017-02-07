@@ -6,19 +6,25 @@ import org.codehaus.groovy.control.SourceUnit
 @Singleton
 class GroovisBuilder {
 
-    Map<String, List> composition = [:]
     boolean generated = false
+    Set<ClassNode> classes = []
 
     void add(SourceUnit sourceUnit) {
-        sourceUnit.AST.classes.each { ClassNode classNode ->
-            composition[classNode.name] = classNode.fields.collect { it.type.name }
-        }
+        classes.addAll(sourceUnit.AST.classes.findAll(this.&shouldAdd))
+    }
+
+    private boolean shouldAdd(ClassNode classNode) {
+        isNotEnum(classNode)
+    }
+
+    private boolean isNotEnum(ClassNode classNode) {
+        classNode.superClass.name != Enum.name
     }
 
     String generate() {
         generated = true
         def out = 'digraph {\n'
-        out = composition.inject(out) { String acc, String className, List<String> dependsOn ->
+        out = compose().inject(out) { String acc, String className, List<String> dependsOn ->
             if (dependsOn) {
                 dependsOn.inject(acc) { ds, d -> ds + "    $className -> $d;\n" }
             } else {
@@ -28,8 +34,19 @@ class GroovisBuilder {
         out + '}\n'
     }
 
+    private Map<String, List> compose() {
+        def allowedNames = classes*.name
+        classes.collectEntries { ClassNode classNode ->
+            [
+                    (classNode.name): classNode.fields
+                            .findAll { it.type.name in allowedNames }
+                            .collect { it.type.name }
+            ]
+        }
+    }
+
     void clear() {
-        composition = [:]
+        classes = []
         generated = false
     }
 }
