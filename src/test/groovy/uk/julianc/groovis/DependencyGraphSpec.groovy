@@ -35,7 +35,7 @@ class DependencyGraphSpec extends Specification {
         expect:
         output ==
                 'digraph {\n' +
-                '    SomeService;\n' +
+                '    "SomeService";\n' +
                 '}\n'
     }
 
@@ -52,8 +52,8 @@ class DependencyGraphSpec extends Specification {
         expect:
         output ==
                 'digraph {\n' +
-                '    SomeService -> SomeOtherService;\n' +
-                '    SomeOtherService;\n' +
+                '    "SomeService" -> "SomeOtherService";\n' +
+                '    "SomeOtherService";\n' +
                 '}\n'
     }
 
@@ -72,10 +72,10 @@ class DependencyGraphSpec extends Specification {
         expect:
         output ==
                 'digraph {\n' +
-                '    Father -> Daughter;\n' +
-                '    Father -> Son;\n' +
-                '    Daughter;\n' +
-                '    Son;\n' +
+                '    "Father" -> "Daughter";\n' +
+                '    "Father" -> "Son";\n' +
+                '    "Daughter";\n' +
+                '    "Son";\n' +
                 '}\n'
     }
 
@@ -98,9 +98,9 @@ class DependencyGraphSpec extends Specification {
         expect:
         output ==
                 'digraph {\n' +
-                '    Foo -> Bar;\n' +
-                '    Bar -> Poop;\n' +
-                '    Poop -> Foo;\n' +
+                '    "Foo" -> "Bar";\n' +
+                '    "Bar" -> "Poop";\n' +
+                '    "Poop" -> "Foo";\n' +
                 '}\n'
     }
 
@@ -119,7 +119,7 @@ class DependencyGraphSpec extends Specification {
         expect:
         output ==
                 'digraph {\n' +
-                '    Foo;\n' +
+                '    "Foo";\n' +
                 '}\n'
     }
 

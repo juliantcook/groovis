@@ -26,9 +26,9 @@ class GroovisBuilder {
         def out = 'digraph {\n'
         out = compose().inject(out) { String acc, String className, List<String> dependsOn ->
             if (dependsOn) {
-                dependsOn.inject(acc) { ds, d -> ds + "    $className -> $d;\n" }
+                dependsOn.inject(acc) { ds, d -> ds + "    \"$className\" -> \"$d\";\n" }
             } else {
-                acc + "    $className;\n"
+                acc + "    \"$className\";\n"
             }
         }
         out + '}\n'
