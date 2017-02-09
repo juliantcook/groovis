@@ -21,10 +21,10 @@ class GroovisBuilder {
         classNode.superClass.name != Enum.name
     }
 
-    String generate() {
+    String generate(Options options = new Options()) {
         generated = true
         def out = 'digraph {\n'
-        out = compose().inject(out) { String acc, String className, List<String> dependsOn ->
+        out = compose(options).inject(out) { String acc, String className, List<String> dependsOn ->
             if (dependsOn) {
                 dependsOn.inject(acc) { ds, d -> ds + "    \"$className\" -> \"$d\";\n" }
             } else {
@@ -34,15 +34,19 @@ class GroovisBuilder {
         out + '}\n'
     }
 
-    private Map<String, List> compose() {
+    private Map<String, List> compose(Options options) {
         def allowedNames = classes*.name
-        classes.collectEntries { ClassNode classNode ->
+        def composition = classes.collectEntries { ClassNode classNode ->
             [
                     (classNode.name): classNode.fields
                             .findAll { it.type.name in allowedNames }
                             .collect { it.type.name }
             ]
         }
+        if (!options.includeOrphans) {
+            composition = composition.findAll { k, v -> v }
+        }
+        composition
     }
 
     void clear() {

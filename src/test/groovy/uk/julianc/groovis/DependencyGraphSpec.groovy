@@ -123,12 +123,34 @@ class DependencyGraphSpec extends Specification {
                 '}\n'
     }
 
+    def 'options: dont include orphans'() {
+        given:
+        def opts = new Options(includeOrphans: false)
+
+        and:
+        input '''
+        class Father {
+            Son son
+        }
+
+        class Son {}
+
+        class Orphan {}
+'''
+
+        expect:
+        getOutput(opts) ==
+                'digraph {\n' +
+                '    "Father" -> "Son";\n' +
+                '}\n'
+    }
+
     private input(String input) {
         def transform = new GroovisTransform()
         new TransformTestHelper(transform, CONVERSION).parse input
     }
 
-    private String getOutput() {
-        GroovisBuilder.instance.generate()
+    private String getOutput(Options options = new Options()) {
+        GroovisBuilder.instance.generate(options)
     }
 }
