@@ -7,21 +7,10 @@ import static org.codehaus.groovy.control.CompilePhase.CONVERSION
 
 class DependencyGraphSpec extends Specification {
 
+    private static final boolean GENERATE_FILE = true
+
     def cleanup() {
-        def file = writeDotFile()
-        generateImage(file)
         GroovisBuilder.instance.clear()
-    }
-
-    private File writeDotFile() {
-        def dir = new File("build/graphs/")
-        dir.mkdirs()
-        def fileName = "${specificationContext.currentFeature.name.replace(' ', '_')}.dot"
-        new File(dir, fileName) << GroovisBuilder.instance.generate()
-    }
-
-    private generateImage(File file) {
-        "dot -O -T png ${file.path}".execute()
     }
 
     def 'single class with no fields produces single node'() {
@@ -151,6 +140,25 @@ class DependencyGraphSpec extends Specification {
     }
 
     private String getOutput(Options options = new Options()) {
-        GroovisBuilder.instance.generate(options)
+        def out = GroovisBuilder.instance.generate(options)
+        if (GENERATE_FILE) {
+            generateFile(out)
+        }
+        out
+    }
+
+    private void generateFile(String out) {
+        generateImage(writeDotFile(out))
+    }
+
+    private File writeDotFile(String dotContents) {
+        def dir = new File("build/graphs/")
+        dir.mkdirs()
+        def fileName = "${specificationContext.currentFeature.name.replace(' ', '_')}.dot"
+        new File(dir, fileName) << dotContents
+    }
+
+    private generateImage(File file) {
+        "dot -O -T png ${file.path}".execute()
     }
 }
